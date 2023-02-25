@@ -9,7 +9,7 @@ require("./models/transaction");
 const Transaction = mongoose.model("Transaction");
 const client = require('prom-client');
 
-//mongoDB setup
+// mongoDB setup
 mongoose.connect(KEYS.MONGOURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -48,13 +48,12 @@ app.get("/", (req, res,next) => {
 });
 
 app.post("/getNormalTransactionsAPIResponse", (req, res,next) => {
-  const end = httpRequestTimer.startTimer();
+  const end = httpRequestTimer.startTimer(); //start httpRequestTimer
   const route = req.route.path;
   let account = req.body.account;
   let apiKey = KEYS.APIKEY;
   if (!account || !apiKey) {
-    res.status(422).json({ error: "apiKey or account id not valid" });
-    res.end();
+    return res.status(422).json({ error: "apiKey or account id not valid" });
   }
   let apiResponse = null;
   api_resolver
@@ -66,8 +65,7 @@ app.post("/getNormalTransactionsAPIResponse", (req, res,next) => {
     )
     .then((response) => {
       if (response.status == "0") {
-        res.status(400).send(response.message);
-        res.end();
+        return res.status(400).send(response.message);
       }
       apiResponse = response;
       const transaction = new Transaction({
@@ -78,30 +76,28 @@ app.post("/getNormalTransactionsAPIResponse", (req, res,next) => {
         .save()
         .then((result) => {
           res.status(200).json(result);
-          end({ route, code: res.statusCode, method: req.method });
+          end({ route, code: res.statusCode, method: req.method }); // end the httpRequestTimer
           next();
           res.end();
         })
         .catch((err) => {
           console.log(err);
-          res.status(400).send("mongodb insert error!");
-          res.end();
+          return res.status(400).send("mongodb insert error!");
         });
     })
     .catch((error) => {
       console.log(error);
-      res.status(400).send(error);
-      res.end();
+      return res.status(400).send(error);
     });
 });
 
 //exposing metric to prometheus
 app.get('/metrics', async (req, res) => {
-  const end = httpRequestTimer.startTimer();
+  const end = httpRequestTimer.startTimer(); // start httpRequestTimer
   const route = req.route.path;
   res.setHeader('Content-Type', register.contentType);
   res.send(await register.metrics());
-  end({ route, code: res.statusCode, method: req.method });
+  end({ route, code: res.statusCode, method: req.method }); //end httpRequestTimer
 });
 
 app.listen(PORT, () => {
