@@ -26,7 +26,7 @@ The hosted website can be found [here](https://instafam12.herokuapp.com/)
    ```sh
    npm install
    ```
-3. Create a .env file using the template .env.template and add values accordingly.
+3. Create you own Keys.js in the root folder, specifying the APIKEY for etherscan and MONGOURI
 
 ### Usage
 

@@ -7,7 +7,7 @@ const KEYS = require("./Keys.js");
 const api_resolver = require("./helper/API_resolver");
 require("./models/transaction");
 const Transaction = mongoose.model("Transaction");
-const client = require('prom-client');
+const client = require("prom-client");
 
 // mongoDB setup
 mongoose.connect(KEYS.MONGOURI, {
@@ -27,27 +27,26 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Prometheus setup
 const register = new client.Registry();
-client.collectDefaultMetrics({register});
+client.collectDefaultMetrics({ register });
 
 const httpRequestTimer = new client.Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'code'],
-  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10] // 0.1 to 10 seconds
+  name: "http_request_duration_seconds",
+  help: "Duration of HTTP requests in seconds",
+  labelNames: ["method", "route", "code"],
+  buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10], // 0.1 to 10 seconds
 });
 
 register.registerMetric(httpRequestTimer);
 
-
 // routes
 
-app.get("/", (req, res,next) => {
+app.get("/", (req, res, next) => {
   // console.log("/ works!")
   res.send("it works!");
   next();
 });
 
-app.post("/getNormalTransactionsAPIResponse", (req, res,next) => {
+app.post("/getNormalTransactionsAPIResponse", (req, res, next) => {
   const end = httpRequestTimer.startTimer(); //start httpRequestTimer
   const route = req.route.path;
   let account = req.body.account;
@@ -92,10 +91,10 @@ app.post("/getNormalTransactionsAPIResponse", (req, res,next) => {
 });
 
 //exposing metric to prometheus
-app.get('/metrics', async (req, res) => {
+app.get("/metrics", async (req, res) => {
   const end = httpRequestTimer.startTimer(); // start httpRequestTimer
   const route = req.route.path;
-  res.setHeader('Content-Type', register.contentType);
+  res.setHeader("Content-Type", register.contentType);
   res.send(await register.metrics());
   end({ route, code: res.statusCode, method: req.method }); //end httpRequestTimer
 });
