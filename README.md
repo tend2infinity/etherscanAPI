@@ -24,8 +24,8 @@ Nodejs API to fetch crypto transactions of a user and scrap metrics from the ser
    ```sh
    npm install
    ```
-3. Install docker according to you operating system. This will help in running a prometheus container to scrap metrics from our node server
-4. Create you own Keys.js in the root folder, specifying the APIKEY for etherscan and MONGOURI like so,
+3. Install `docker` according to you operating system. This will help in running a prometheus container to scrap metrics from our node server
+4. Create you own `Keys.js` in the root folder, specifying the APIKEY for etherscan and MONGOURI like so,
    ```
    module.exports = {
        MONGOURI: '****',
