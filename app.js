@@ -102,8 +102,5 @@ app.get("/metrics", async (req, res) => {
 app.listen(PORT, () => {
   console.log("app is running on", PORT);
 });
-<<<<<<< HEAD
 // this is the commit made in main
-=======
 // this comment is done in the test branch
->>>>>>> f239a27 (added test commit)
